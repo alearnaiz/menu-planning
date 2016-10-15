@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Menu</title>
+</head>
+<body>
+    {% if menu %}
+        <h1>Your menu</h1>
+        <table border="1" cellpadding="5" cellspacing="5">
+            <tr>
+                <th>Date</th>
+                <th>Starter</th>
+                <th>Lunch</th>
+                <th>Dinner</th>
+            </tr>
+            {% for daily_menu in menu.daily_menus %}
+                <tr>
+                    <td>{{ daily_menu.day }}</td>
+                    <td>
+                        {% if daily_menu.starter %}
+                            {{ daily_menu.starter.name }}
+                        {% else %}
+                            No starter
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if daily_menu.lunch %}
+                            {{ daily_menu.lunch.name }}
+                        {% else %}
+                            No lunch
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if daily_menu.dinner %}
+                            {{ daily_menu.dinner.name }}
+                        {% else %}
+                            No dinner
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <h1>Menu not found</h1>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,4 @@
+.idea/
+*.py[cod]
+.cache/
+__pycache__/

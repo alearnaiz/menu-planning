@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Create menu</title>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="/resources/demos/style.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $(function() {
+            $("#start_date").datepicker();
+            $("#end_date").datepicker();
+        });
+    </script>
+
+</head>
+<body>
+
+    <h1>Generate random menu planning</h1>
+    {% if error %}
+        <h2>{{ error }}</h2>
+    {% endif %}
+
+    <form method="post" action="generate_menu">
+
+        <label for="start_lunch">Start lunch?</label>
+        <select name="start_lunch" id="start_lunch">
+            <option value="True">Yes</option>
+            <option value="False">No</option>
+        </select>
+
+        <br>
+        
+        <label for="end_dinner">End dinner?</label>
+        <select name="end_dinner" id="end_dinner">
+            <option value="True">Yes</option>
+            <option value="False">No</option>
+        </select>
+
+        <br>
+
+        <label for="start_date">Start date</label>
+        <input type="date" name="start_date" id="start_date">
+
+        <br>
+
+        <label for="end_date">End date</label>
+        <input type="date" name="end_date" id="end_date">
+
+        <br>
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

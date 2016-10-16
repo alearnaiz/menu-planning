@@ -60,12 +60,11 @@ class GenerateMenuPlanning(object):
                 if lunch_days_left > 0:
                     if current_lunch and current_lunch.days > num_lunch_days:
                         add_new_lunch = False
-                        num_lunch_days += 1
                     elif current_dinner and current_dinner.related_lunch and \
                             (not current_lunch or current_lunch.id != current_dinner.related_lunch.id):
+                        num_lunch_days = 0
                         add_new_lunch = False
                         current_lunch = current_dinner.related_lunch
-                        num_lunch_days = 1
                     else:
                         add_new_lunch = True
                 else:
@@ -88,21 +87,18 @@ class GenerateMenuPlanning(object):
                 if add_new_lunch:
                     current_lunch = self.generate_lunch(menu.id, lunch_days_left=lunch_days_left,
                                                         dinner_days_left=dinner_days_left, dinner_left=dinner_left)
+                    current_starter = None
+                    num_starter_days = 0
+                    sum_starter_days_by_lunch = 0
                     num_lunch_days = 1
                     if current_lunch.related_dinner_id:
+                        num_dinner_days = 0
                         current_dinner = self.dinner_service.get_by_id(id=current_lunch.related_dinner_id)
                         add_new_dinner = False
-                        num_dinner_days = 1
+                else:
+                    num_lunch_days += 1
 
-                    if current_lunch.need_starter:
-                        current_starter = self.generate_starter(menu.id, starter_days_left=current_lunch.days)
-                        sum_starter_days_by_lunch = 1
-                        num_starter_days = 1
-                    else:
-                        current_starter = None
-                        sum_starter_days_by_lunch = 0
-                        num_starter_days = 0
-                elif current_lunch and current_lunch.need_starter:
+                if current_lunch and current_lunch.need_starter:
                     if current_starter:
                         if current_starter.days > num_starter_days:
                             num_starter_days += 1
@@ -116,6 +112,10 @@ class GenerateMenuPlanning(object):
                         current_starter = self.generate_starter(menu.id, starter_days_left=current_lunch.days)
                         num_starter_days = 1
                         sum_starter_days_by_lunch += 1
+                else:
+                    current_starter = None
+                    sum_starter_days_by_lunch = 0
+                    num_starter_days = 0
 
                 lunch_days_left -= 1
 

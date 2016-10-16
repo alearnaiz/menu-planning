@@ -41,7 +41,7 @@ class TestGenerateDinner(unittest.TestCase):
         self.dinner_service.get_random = MagicMock(return_value=dinner)
         self.dinner_service.get_by_id_and_menu_id = MagicMock(return_value=None)
 
-        generate_dinner = GenerateDinner(1, lunch_days_left=2, dinner_days_left=2, lunch_left=Lunch('Eggs'),
+        generate_dinner = GenerateDinner(1, lunch_days_left=2, dinner_days_left=2, is_lunch_left=True,
                                          dinner_service=self.dinner_service)
 
         assert not generate_dinner.is_valid()

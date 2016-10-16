@@ -67,7 +67,7 @@ class GenerateMenuPlanning(object):
                         num_lunch_days = 1
                     else:
                         current_lunch = self.generate_lunch(menu.id, lunch_days_left, dinner_days_left,
-                                                            dinner_left=
+                                                            is_dinner_left=
                                                             self.is_dinner_left(current_dinner, num_dinner_days))
                         num_lunch_days = 1
 
@@ -104,7 +104,7 @@ class GenerateMenuPlanning(object):
                         num_dinner_days = 1
                     else:
                         current_dinner = self.generate_dinner(menu.id, lunch_days_left, dinner_days_left,
-                                                              lunch_left=
+                                                              is_lunch_left=
                                                               self.is_lunch_left(current_lunch, num_lunch_days))
                         num_dinner_days = 1
 
@@ -125,11 +125,11 @@ class GenerateMenuPlanning(object):
         return menu
 
     @classmethod
-    def generate_lunch(cls, menu_id, lunch_days_left, dinner_days_left, dinner_left=None):
+    def generate_lunch(cls, menu_id, lunch_days_left, dinner_days_left, is_dinner_left=None):
         for i in range(cls.MAX_RETRIES):
             generate_lunch = GenerateLunch(menu_id=menu_id, lunch_days_left=lunch_days_left,
                                            dinner_days_left=dinner_days_left,
-                                           dinner_left=dinner_left)
+                                           is_dinner_left=is_dinner_left)
             if generate_lunch.is_valid():
                 lunch = generate_lunch.lunch
                 break
@@ -138,11 +138,11 @@ class GenerateMenuPlanning(object):
         return lunch
 
     @classmethod
-    def generate_dinner(cls, menu_id, lunch_days_left, dinner_days_left, lunch_left=None):
+    def generate_dinner(cls, menu_id, lunch_days_left, dinner_days_left, is_lunch_left=False):
         for i in range(cls.MAX_RETRIES):
             generate_dinner = GenerateDinner(menu_id=menu_id, lunch_days_left=lunch_days_left,
                                              dinner_days_left=dinner_days_left,
-                                             lunch_left=lunch_left)
+                                             is_lunch_left=is_lunch_left)
             if generate_dinner.is_valid():
                 dinner = generate_dinner.dinner
                 break

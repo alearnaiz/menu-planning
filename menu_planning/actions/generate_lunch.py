@@ -4,12 +4,12 @@ from menu_planning.services.lunch_service import LunchService
 
 class GenerateLunch(object):
 
-    def __init__(self, menu_id, lunch_days_left, dinner_days_left, dinner_left=False,
+    def __init__(self, menu_id, lunch_days_left, dinner_days_left, is_dinner_left=False,
                  lunch_service=LunchService(), dinner_service=DinnerService()):
         self.menu_id = menu_id
         self.lunch_days_left = lunch_days_left
         self.dinner_days_left = dinner_days_left
-        self.dinner_left = dinner_left
+        self.is_dinner_left = is_dinner_left
         self.lunch_service = lunch_service
         self.dinner_service = dinner_service
 
@@ -22,7 +22,7 @@ class GenerateLunch(object):
         return self.lunch_service.get_by_id_and_menu_id(self.lunch.id, self.menu_id)
 
     def can_have_related_dinner(self):
-        return not self.dinner_left
+        return not self.is_dinner_left
 
     def has_related_dinner_enough_days(self):
         dinner = self.dinner_service.get_by_id(id=self.lunch.related_dinner_id)

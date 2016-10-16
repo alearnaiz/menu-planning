@@ -53,87 +53,68 @@ class GenerateMenuPlanning(object):
             if day == 0 and not start_lunch:
                 current_starter = None
                 current_lunch = None
-                current_dinner = self.generate_dinner(menu.id, lunch_days_left=lunch_days_left,
-                                                      dinner_days_left=dinner_days_left)
+                current_dinner = self.generate_dinner(menu.id, lunch_days_left, dinner_days_left)
+                num_dinner_days = 1
                 dinner_days_left -= 1
             else:
                 if lunch_days_left > 0:
-                    if current_lunch and current_lunch.days > num_lunch_days:
-                        add_new_lunch = False
-                    elif current_dinner and current_dinner.related_lunch and \
-                            (not current_lunch or current_lunch.id != current_dinner.related_lunch.id):
-                        num_lunch_days = 0
-                        add_new_lunch = False
+
+                    # Lunch
+                    if self.is_lunch_left(current_lunch, num_lunch_days):
+                        num_lunch_days += 1
+                    elif current_dinner and current_dinner.related_lunch and not \
+                            self.lunch_service.get_by_id_and_menu_id(
+                                id=current_dinner.related_lunch.id, menu_id=menu.id):
                         current_lunch = current_dinner.related_lunch
+                        num_lunch_days = 1
                     else:
-                        add_new_lunch = True
+                        current_lunch = self.generate_lunch(menu.id, lunch_days_left, dinner_days_left,
+                                                            dinner_left=
+                                                            self.is_dinner_left(current_dinner, num_dinner_days))
+                        num_lunch_days = 1
+
+                    lunch_days_left -= 1
+
+                    # Starter
+                    if current_lunch and current_lunch.need_starter:
+                        if num_lunch_days == 1:
+                            current_starter = self.generate_starter(menu.id, starter_days_left=current_lunch.days)
+                            sum_starter_days_by_lunch = 1
+                            num_starter_days = 1
+                        else:
+                            starter_days_left = current_lunch.days - sum_starter_days_by_lunch
+                            if self.is_starter_left(current_starter, num_starter_days=starter_days_left):
+                                sum_starter_days_by_lunch += 1
+                                num_starter_days += 1
+                            else:
+                                current_starter = self.generate_starter(menu.id, starter_days_left=starter_days_left)
+                                num_starter_days = 1
+                                sum_starter_days_by_lunch += 1
+                    else:
+                        current_starter = None
                 else:
                     current_lunch = None
                     current_starter = None
-                    add_new_lunch = False
 
                 if dinner_days_left > 0:
-                    if current_dinner and current_dinner.days > num_dinner_days:
-                        add_new_dinner = False
-                        dinner_left = True
+
+                    # Dinner
+                    if self.is_lunch_left(current_dinner, num_dinner_days):
+                            num_dinner_days += 1
+                    elif current_lunch and current_lunch.related_dinner_id and not \
+                            self.dinner_service.get_by_id_and_menu_id(
+                                id=current_lunch.related_dinner_id, menu_id=menu.id):
+                        current_dinner = self.dinner_service.get_by_id(id=current_lunch.related_dinner_id)
+                        num_dinner_days = 1
                     else:
-                        add_new_dinner = True
-                        dinner_left = False
+                        current_dinner = self.generate_dinner(menu.id, lunch_days_left, dinner_days_left,
+                                                              lunch_left=
+                                                              self.is_lunch_left(current_dinner, num_dinner_days))
+                        num_dinner_days = 1
+
+                    dinner_days_left -= 1
                 else:
                     current_dinner = None
-                    add_new_dinner = False
-                    dinner_left = False
-
-                if add_new_lunch:
-                    current_lunch = self.generate_lunch(menu.id, lunch_days_left=lunch_days_left,
-                                                        dinner_days_left=dinner_days_left, dinner_left=dinner_left)
-                    current_starter = None
-                    num_starter_days = 0
-                    sum_starter_days_by_lunch = 0
-                    num_lunch_days = 1
-                    if current_lunch.related_dinner_id:
-                        num_dinner_days = 0
-                        current_dinner = self.dinner_service.get_by_id(id=current_lunch.related_dinner_id)
-                        add_new_dinner = False
-                else:
-                    num_lunch_days += 1
-
-                if current_lunch and current_lunch.need_starter:
-                    if current_starter:
-                        if current_starter.days > num_starter_days:
-                            num_starter_days += 1
-                            sum_starter_days_by_lunch += 1
-                        else:
-                            current_starter = self.generate_starter(menu.id, starter_days_left=
-                                                                    current_lunch.days - sum_starter_days_by_lunch)
-                            num_starter_days = 1
-                            sum_starter_days_by_lunch += 1
-                    else:
-                        current_starter = self.generate_starter(menu.id, starter_days_left=current_lunch.days)
-                        num_starter_days = 1
-                        sum_starter_days_by_lunch += 1
-                else:
-                    current_starter = None
-                    sum_starter_days_by_lunch = 0
-                    num_starter_days = 0
-
-                lunch_days_left -= 1
-
-                if add_new_dinner:
-
-                    if current_lunch.days > num_lunch_days:
-                        lunch_left = True
-                    else:
-                        lunch_left = False
-
-                    current_dinner = self.generate_dinner(menu.id, lunch_days_left=lunch_days_left,
-                                                          dinner_days_left=dinner_days_left, lunch_left=lunch_left)
-
-                    num_dinner_days = 1
-                else:
-                    num_dinner_days += 1
-
-                dinner_days_left -= 1
 
             dinner_id = current_dinner.id if current_dinner else None
             starter_id = current_starter.id if current_starter else None
@@ -142,7 +123,7 @@ class GenerateMenuPlanning(object):
             self.daily_menu_service.create(current_date, menu.id, lunch_id=lunch_id, dinner_id=dinner_id,
                                            starter_id=starter_id)
 
-            # Update variables
+            # Update variable
             current_date += timedelta(days=1)
 
         return menu
@@ -184,3 +165,14 @@ class GenerateMenuPlanning(object):
             raise Exception('We could not do a menu planning. Try again')
         return starter
 
+    @classmethod
+    def is_lunch_left(cls, lunch, num_lunch_days):
+        return lunch and (lunch.days > num_lunch_days)
+
+    @classmethod
+    def is_dinner_left(cls, dinner, num_dinner_days):
+        return dinner and (dinner.days > num_dinner_days)
+
+    @classmethod
+    def is_starter_left(cls, starter, num_starter_days):
+        return starter and (starter.days > num_starter_days)

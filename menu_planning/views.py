@@ -26,7 +26,7 @@ def generate_menu():
 
     start_date = get_date(start_date)
     end_date = get_date(end_date)
-    days = (end_date - start_date).days
+    days = (end_date - start_date).days + 1
 
     generate_menu_planning = GenerateMenuPlanning()
     try:
@@ -55,35 +55,30 @@ def get_menu(menu_id):
     if not menu:
         return None
 
-    starter = None
-    lunch = None
-    dinner = None
-
     starter_service = StarterService()
     lunch_service = LunchService()
     dinner_service = DinnerService()
 
-    idx = 0
     for daily_menu in menu.daily_menus:
 
         if daily_menu.lunch_id:
             lunch = lunch_service.get_by_id(daily_menu.lunch_id)
+        else:
+            lunch = None
 
         if daily_menu.starter_id:
             starter = starter_service.get_by_id(daily_menu.starter_id)
-        elif not lunch or not lunch.need_starter:
+        else:
             starter = None
 
         if daily_menu.dinner_id:
             dinner = dinner_service.get_by_id(daily_menu.dinner_id)
-        elif idx == len(menu.daily_menus) - 1:
-            dinner = dinner_service.get_dinner_left(menu_id, daily_menu.day)
+        else:
+            dinner = None
 
         daily_menu.starter = starter
         daily_menu.lunch = lunch
         daily_menu.dinner = dinner
-
-        idx += 1
 
     return menu
 

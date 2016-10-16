@@ -125,7 +125,7 @@ class GenerateMenuPlanning(object):
         return menu
 
     @classmethod
-    def generate_lunch(cls, menu_id, lunch_days_left, dinner_days_left, is_dinner_left=None):
+    def generate_lunch(cls, menu_id, lunch_days_left, dinner_days_left, is_dinner_left=False):
         for i in range(cls.MAX_RETRIES):
             generate_lunch = GenerateLunch(menu_id=menu_id, lunch_days_left=lunch_days_left,
                                            dinner_days_left=dinner_days_left,

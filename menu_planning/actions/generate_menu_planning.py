@@ -62,9 +62,7 @@ class GenerateMenuPlanning(object):
                     # Lunch
                     if self.is_lunch_left(current_lunch, num_lunch_days):
                         num_lunch_days += 1
-                    elif current_dinner and current_dinner.related_lunch and not \
-                            self.lunch_service.get_by_id_and_menu_id(
-                                id=current_dinner.related_lunch.id, menu_id=menu.id):
+                    elif self.is_mandatory_lunch(current_dinner, menu.id):
                         current_lunch = current_dinner.related_lunch
                         num_lunch_days = 1
                     else:
@@ -99,17 +97,15 @@ class GenerateMenuPlanning(object):
                 if dinner_days_left > 0:
 
                     # Dinner
-                    if self.is_lunch_left(current_dinner, num_dinner_days):
+                    if self.is_dinner_left(current_dinner, num_dinner_days):
                             num_dinner_days += 1
-                    elif current_lunch and current_lunch.related_dinner_id and not \
-                            self.dinner_service.get_by_id_and_menu_id(
-                                id=current_lunch.related_dinner_id, menu_id=menu.id):
+                    elif self.is_mandatory_dinner(current_lunch, menu.id):
                         current_dinner = self.dinner_service.get_by_id(id=current_lunch.related_dinner_id)
                         num_dinner_days = 1
                     else:
                         current_dinner = self.generate_dinner(menu.id, lunch_days_left, dinner_days_left,
                                                               lunch_left=
-                                                              self.is_lunch_left(current_dinner, num_dinner_days))
+                                                              self.is_lunch_left(current_lunch, num_lunch_days))
                         num_dinner_days = 1
 
                     dinner_days_left -= 1
@@ -176,3 +172,11 @@ class GenerateMenuPlanning(object):
     @classmethod
     def is_starter_left(cls, starter, num_starter_days):
         return starter and (starter.days > num_starter_days)
+
+    def is_mandatory_lunch(self, dinner, menu_id):
+        return dinner and dinner.related_lunch and not \
+            self.lunch_service.get_by_id_and_menu_id(id=dinner.related_lunch.id, menu_id=menu_id)
+
+    def is_mandatory_dinner(self, lunch, menu_id):
+        return lunch and lunch.related_dinner_id and not \
+            self.dinner_service.get_by_id_and_menu_id(id=lunch.related_dinner_id, menu_id=menu_id)

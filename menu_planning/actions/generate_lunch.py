@@ -4,7 +4,7 @@ from menu_planning.services.lunch_service import LunchService
 
 class GenerateLunch(object):
 
-    def __init__(self, menu_id, lunch_days_left, dinner_days_left, dinner_left=None,
+    def __init__(self, menu_id, lunch_days_left, dinner_days_left, dinner_left=False,
                  lunch_service=LunchService(), dinner_service=DinnerService()):
         self.menu_id = menu_id
         self.lunch_days_left = lunch_days_left

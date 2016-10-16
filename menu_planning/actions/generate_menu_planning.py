@@ -12,7 +12,7 @@ from menu_planning.services.menu_service import MenuService
 
 class GenerateMenuPlanning(object):
 
-    MAX_RETIRES = 30
+    MAX_RETRIES = 30
 
     def __init__(self, starter_service=StarterService(), lunch_service=LunchService(), dinner_service=DinnerService(),
                  daily_menu_service=DailyMenuService(), menu_service=MenuService()):
@@ -61,8 +61,8 @@ class GenerateMenuPlanning(object):
                     if current_lunch and current_lunch.days > num_lunch_days:
                         add_new_lunch = False
                         num_lunch_days += 1
-                    elif current_dinner and current_dinner.related_lunch \
-                        and (not current_lunch or current_lunch.id != current_dinner.related_lunch.id):
+                    elif current_dinner and current_dinner.related_lunch and \
+                            (not current_lunch or current_lunch.id != current_dinner.related_lunch.id):
                         add_new_lunch = False
                         current_lunch = current_dinner.related_lunch
                         num_lunch_days = 1
@@ -76,15 +76,18 @@ class GenerateMenuPlanning(object):
                 if dinner_days_left > 0:
                     if current_dinner and current_dinner.days > num_dinner_days:
                         add_new_dinner = False
+                        dinner_left = True
                     else:
                         add_new_dinner = True
+                        dinner_left = False
                 else:
                     current_dinner = None
                     add_new_dinner = False
+                    dinner_left = False
 
                 if add_new_lunch:
                     current_lunch = self.generate_lunch(menu.id, lunch_days_left=lunch_days_left,
-                                                        dinner_days_left=dinner_days_left, dinner_left=add_new_dinner)
+                                                        dinner_days_left=dinner_days_left, dinner_left=dinner_left)
                     num_lunch_days = 1
                     if current_lunch.related_dinner_id:
                         current_dinner = self.dinner_service.get_by_id(id=current_lunch.related_dinner_id)
@@ -146,38 +149,38 @@ class GenerateMenuPlanning(object):
 
     @classmethod
     def generate_lunch(cls, menu_id, lunch_days_left, dinner_days_left, dinner_left=None):
-        for i in range(cls.MAX_RETIRES):
+        for i in range(cls.MAX_RETRIES):
             generate_lunch = GenerateLunch(menu_id=menu_id, lunch_days_left=lunch_days_left,
                                            dinner_days_left=dinner_days_left,
                                            dinner_left=dinner_left)
             if generate_lunch.is_valid():
                 lunch = generate_lunch.lunch
                 break
-        if i == cls.MAX_RETIRES-1:
+        if i == cls.MAX_RETRIES-1:
             raise Exception('We could not do a menu planning. Try again')
         return lunch
 
     @classmethod
     def generate_dinner(cls, menu_id, lunch_days_left, dinner_days_left, lunch_left=None):
-        for i in range(cls.MAX_RETIRES):
+        for i in range(cls.MAX_RETRIES):
             generate_dinner = GenerateDinner(menu_id=menu_id, lunch_days_left=lunch_days_left,
                                              dinner_days_left=dinner_days_left,
                                              lunch_left=lunch_left)
             if generate_dinner.is_valid():
                 dinner = generate_dinner.dinner
                 break
-        if i == cls.MAX_RETIRES-1:
+        if i == cls.MAX_RETRIES-1:
             raise Exception('We could not do a menu planning. Try again')
         return dinner
 
     @classmethod
     def generate_starter(cls, menu_id, starter_days_left):
-        for i in range(cls.MAX_RETIRES):
+        for i in range(cls.MAX_RETRIES):
             generate_starter = GenerateStarter(menu_id=menu_id, starter_days_left=starter_days_left)
             if generate_starter.is_valid():
                 starter = generate_starter.starter
                 break
-        if i == cls.MAX_RETIRES-1:
+        if i == cls.MAX_RETRIES-1:
             raise Exception('We could not do a menu planning. Try again')
         return starter
 

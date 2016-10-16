@@ -44,7 +44,7 @@ def menu(menu_id):
 
 
 @app.errorhandler(404)
-def page_not_found():
+def page_not_found(error):
     return "Page Not Found", 404
 
 

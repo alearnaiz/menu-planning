@@ -28,13 +28,10 @@ class GenerateMenuPlanning(object):
             raise Exception('Wrong parameters')
 
         # Set variables
-        current_starter = None
         current_lunch = None
         current_dinner = None
-        num_starter_days = 0
         num_lunch_days = 0
         num_dinner_days = 0
-        sum_starter_days_by_lunch = 0
 
         if start_lunch:
             lunch_days_left = days
@@ -75,19 +72,7 @@ class GenerateMenuPlanning(object):
 
                     # Starter
                     if current_lunch and current_lunch.need_starter:
-                        if num_lunch_days == 1:
-                            current_starter = self.generate_starter(menu.id, starter_days_left=current_lunch.days)
-                            sum_starter_days_by_lunch = 1
-                            num_starter_days = 1
-                        else:
-                            starter_days_left = current_lunch.days - sum_starter_days_by_lunch
-                            if self.is_starter_left(current_starter, num_starter_days=starter_days_left):
-                                sum_starter_days_by_lunch += 1
-                                num_starter_days += 1
-                            else:
-                                current_starter = self.generate_starter(menu.id, starter_days_left=starter_days_left)
-                                num_starter_days = 1
-                                sum_starter_days_by_lunch += 1
+                        current_starter = self.starter_service.get_random()
                     else:
                         current_starter = None
                 else:
@@ -149,17 +134,6 @@ class GenerateMenuPlanning(object):
         if i == cls.MAX_RETRIES-1:
             raise Exception('We could not do a menu planning. Try again')
         return dinner
-
-    @classmethod
-    def generate_starter(cls, menu_id, starter_days_left):
-        for i in range(cls.MAX_RETRIES):
-            generate_starter = GenerateStarter(menu_id=menu_id, starter_days_left=starter_days_left)
-            if generate_starter.is_valid():
-                starter = generate_starter.starter
-                break
-        if i == cls.MAX_RETRIES-1:
-            raise Exception('We could not do a menu planning. Try again')
-        return starter
 
     @classmethod
     def is_lunch_left(cls, lunch, num_lunch_days):

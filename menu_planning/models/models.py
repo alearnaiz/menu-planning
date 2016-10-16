@@ -64,11 +64,9 @@ class Dinner(db.Model):
 class Starter(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    days = db.Column(db.Integer, nullable=False)
 
-    def __init__(self, name, days=1):
+    def __init__(self, name):
         self.name = name
-        self.days = days
 
     def __repr__(self):
         return 'Starter {0}, name {1}'.format(self.id, self.name)

@@ -91,8 +91,8 @@ class GenerateMenuPlanning(object):
                     else:
                         current_starter = None
                 else:
-                    current_lunch = None
                     current_starter = None
+                    current_lunch = None
 
                 if dinner_days_left > 0:
 

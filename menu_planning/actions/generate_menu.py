@@ -10,7 +10,7 @@ from menu_planning.services.starter_service import StarterService
 from menu_planning.services.menu_service import MenuService
 
 
-class GenerateMenuPlanning(object):
+class GenerateMenu(object):
 
     MAX_RETRIES = 30
 
@@ -72,7 +72,7 @@ class GenerateMenuPlanning(object):
 
                     # Starter
                     if current_lunch and current_lunch.need_starter:
-                        current_starter = self.starter_service.get_random()
+                        current_starter = self.generate_starter()
                     else:
                         current_starter = None
                 else:
@@ -111,29 +111,46 @@ class GenerateMenuPlanning(object):
 
     @classmethod
     def generate_lunch(cls, menu_id, lunch_days_left, dinner_days_left, is_dinner_left=False):
+        is_found = False
         for i in range(cls.MAX_RETRIES):
             generate_lunch = GenerateLunch(menu_id=menu_id, lunch_days_left=lunch_days_left,
                                            dinner_days_left=dinner_days_left,
                                            is_dinner_left=is_dinner_left)
             if generate_lunch.is_valid():
                 lunch = generate_lunch.lunch
+                is_found = True
                 break
-        if i == cls.MAX_RETRIES-1:
+        if not is_found:
             raise Exception('We could not do a menu planning. Try again')
         return lunch
 
     @classmethod
     def generate_dinner(cls, menu_id, lunch_days_left, dinner_days_left, is_lunch_left=False):
+        is_found = False
         for i in range(cls.MAX_RETRIES):
             generate_dinner = GenerateDinner(menu_id=menu_id, lunch_days_left=lunch_days_left,
                                              dinner_days_left=dinner_days_left,
                                              is_lunch_left=is_lunch_left)
             if generate_dinner.is_valid():
                 dinner = generate_dinner.dinner
+                is_found = True
                 break
-        if i == cls.MAX_RETRIES-1:
+        if not is_found:
             raise Exception('We could not do a menu planning. Try again')
         return dinner
+
+    @classmethod
+    def generate_starter(cls):
+        is_found = False
+        for i in range(cls.MAX_RETRIES):
+            generate_starter = GenerateStarter()
+            if generate_starter.is_valid():
+                starter = generate_starter.starter
+                is_found = True
+                break
+        if not is_found:
+            raise Exception('We could not do a menu planning. Try again')
+        return starter
 
     @classmethod
     def is_lunch_left(cls, lunch, num_lunch_days):
@@ -142,10 +159,6 @@ class GenerateMenuPlanning(object):
     @classmethod
     def is_dinner_left(cls, dinner, num_dinner_days):
         return dinner and (dinner.days > num_dinner_days)
-
-    @classmethod
-    def is_starter_left(cls, starter, num_starter_days):
-        return starter and (starter.days > num_starter_days)
 
     def is_mandatory_lunch(self, dinner, menu_id):
         return dinner and dinner.related_lunch and not \

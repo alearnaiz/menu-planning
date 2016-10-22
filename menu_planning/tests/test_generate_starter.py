@@ -13,6 +13,6 @@ class TestGenerateStarter(unittest.TestCase):
     def test_valid(self):
         self.starter_service.get_random = MagicMock(return_value=Starter('Gazpacho'))
 
-        generate_starter = GenerateStarter( starter_service=self.starter_service)
+        generate_starter = GenerateStarter(starter_service=self.starter_service)
 
         assert generate_starter.is_valid()

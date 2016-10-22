@@ -13,3 +13,6 @@ class DinnerService(object):
 
     def get_random(self):
         return Dinner.query.order_by(func.rand()).first()
+
+    def get_all(self):
+        return Dinner.query.all()

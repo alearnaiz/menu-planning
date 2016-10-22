@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Edit menu</title>
+</head>
+<body>
+    {% if menu %}
+        <h1>Edit your menu</h1>
+        <form action="/menu/{{ menu.id }}/edit" method="post">
+            <table border="1" cellpadding="5" cellspacing="5">
+                <tr>
+                    <th>Date</th>
+                    <th>Starter</th>
+                    <th>Lunch</th>
+                    <th>Dinner</th>
+                </tr>
+                {% for daily_menu in menu.daily_menus %}
+                    <tr>
+                        <td>{{ daily_menu.day }}</td>
+                        <td>
+                            <select name="starter[{{ daily_menu.day }}]">
+                                <option value="">No starter</option>
+                                {% for starter in menu.starters  %}
+                                    <option value="{{ starter.id }}"
+                                            {% if daily_menu.starter and daily_menu.starter.id == starter.id %}
+                                                selected
+                                            {% endif %}
+                                    >
+                                        {{ starter.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <select name="lunch[{{ daily_menu.day }}]">
+                                <option value="">No lunch</option>
+                                {% for lunch in menu.lunches  %}
+                                    <option value="{{ lunch.id }}"
+                                            {% if daily_menu.lunch and daily_menu.lunch.id == lunch.id %}
+                                                selected
+                                            {% endif %}
+                                    >
+                                        {{ lunch.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <select name="dinner[{{ daily_menu.day }}]">
+                                <option value="">No dinner</option>
+                                {% for dinner in menu.dinners  %}
+                                    <option value="{{ dinner.id }}"
+                                            {% if daily_menu.dinner and daily_menu.dinner.id == dinner.id %}
+                                                selected
+                                            {% endif %}
+                                    >
+                                        {{ dinner.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+
+            <input type="submit" value="Save">
+        </form>
+    {% else %}
+        <h1>Menu not found</h1>
+    {% endif %}
+</body>
+</html>

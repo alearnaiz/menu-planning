@@ -12,3 +12,6 @@ class LunchService(object):
 
     def get_random(self):
         return Lunch.query.order_by(func.rand()).first()
+
+    def get_all(self):
+        return Lunch.query.all()

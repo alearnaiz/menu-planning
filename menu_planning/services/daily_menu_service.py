@@ -1,6 +1,5 @@
 from menu_planning.models import DailyMenu
 from menu_planning import db
-from sqlalchemy import desc
 
 
 class DailyMenuService(object):
@@ -11,5 +10,7 @@ class DailyMenuService(object):
         db.session.commit()
         return daily_menu
 
-    def get_last_by_menu_id_and_lunch_id(self, menu_id, lunch_id):
-        return DailyMenu.query.filter(DailyMenu.menu_id == menu_id, DailyMenu.lunch_id == lunch_id).order_by(desc(DailyMenu.day)).first()
+    def update(self, daily_menu):
+        db.session.add(daily_menu)
+        db.session.commit()
+        return daily_menu

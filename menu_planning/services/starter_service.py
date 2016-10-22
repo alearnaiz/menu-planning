@@ -9,3 +9,6 @@ class StarterService(object):
 
     def get_random(self):
         return Starter.query.order_by(func.rand()).first()
+
+    def get_all(self):
+        return Starter.query.all()

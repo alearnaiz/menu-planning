@@ -32,7 +32,7 @@ def create_menu():
 
         generate_menu = GenerateMenu()
         menu = generate_menu.generate(days=days, start_date=start_date, start_lunch=get_boolean(start_lunch),
-                                              end_dinner=get_boolean(end_dinner))
+                                      end_dinner=get_boolean(end_dinner))
     except Exception as exception:
         return redirect(url_for('index', error=exception))
 
@@ -71,6 +71,23 @@ def edit_menu(menu_id):
         daily_menu_service.update(daily_menu)
 
     return redirect(url_for('show_menu', menu_id=menu.id))
+
+
+@app.route('/menu/<menu_id>/favourite', methods=['POST'])
+def favourite_menu(menu_id):
+    name = request.form.get('name')
+    favourite = request.form.get('favourite')
+
+    menu_service = MenuService()
+    menu_service.favourite(menu_id, name=name, favourite=get_checkbox(favourite))
+    return redirect(url_for('show_menu', menu_id=menu_id))
+
+
+@app.route('/menu/favourites', methods=['GET'])
+def show_favourite_menus():
+    menu_service = MenuService()
+    menus = menu_service.get_all_by_favourites()
+    return render_template('show-favourites.html', menus=menus)
 
 
 @app.errorhandler(404)
@@ -153,3 +170,10 @@ def get_int(argument):
         return int(argument)
     except ValueError:
         return None
+
+
+def get_checkbox(argument):
+    if argument == 'on':
+        return True
+    else:
+        return False

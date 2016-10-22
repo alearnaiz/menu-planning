@@ -7,7 +7,7 @@
 </head>
 <body>
     {% if menu %}
-        <h1>Your menu</h1>
+        <h1>Your menu {% if menu.name %}{{ menu.name }}{% endif %}</h1>
         <table border="1" cellpadding="5" cellspacing="5">
             <tr>
                 <th>Date</th>
@@ -43,7 +43,35 @@
             {% endfor %}
         </table>
 
+        <br>
         <a href="/menu/{{ menu.id }}/edit">Edit menu</a>
+        <br>
+
+        <br>
+
+        {% if menu.favourite %}
+            {% set favourite_text = 'Delete favourite' %}
+        {% else %}
+            {% set favourite_text = 'Add to favourite' %}
+        {% endif %}
+
+        <form action="/menu/{{ menu.id }}/favourite" method="post">
+            <label for="name">Menu name (optional)</label>
+            <input type="text" name="name" value="{% if menu.name %}{{ menu.name }}{% endif %}">
+
+            <br>
+
+            <label for="favourite">Favourite</label>
+            <input type="checkbox" name="favourite" id="favourite"
+                {% if menu.favourite %}
+                    checked
+                {% endif %}
+            >
+
+            <br>
+
+            <input type="submit" value="Submit">
+        </form>
     {% else %}
         <h1>Menu not found</h1>
     {% endif %}

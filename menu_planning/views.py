@@ -41,7 +41,7 @@ def create_menu():
 
 @app.route('/menu/<menu_id>', methods=['GET'])
 def show_menu(menu_id):
-    return render_template('menu.html', menu=get_menu(menu_id))
+    return render_template('show-menu.html', menu=get_menu(menu_id))
 
 
 @app.route('/menu/<menu_id>/edit', methods=['GET'])

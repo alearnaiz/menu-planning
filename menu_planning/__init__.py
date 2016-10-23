@@ -1,8 +1,12 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+import json
+import os
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost/menu_planning?charset=utf8'
+with open(os.getcwd() + '/env.json') as data_file:
+    data = json.load(data_file)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{0}:{1}@{2}/{3}?charset={4}'\
+    .format(data['user'], data['password'], data['host'], data['database'], data['charset'])
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-
 import menu_planning.views

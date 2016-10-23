@@ -7,7 +7,7 @@
 </head>
 <body>
     {% if menu %}
-        <h1>Edit your menu</h1>
+        <h1>Edit your menu {% if menu.name %}{{ menu.name }}{% endif %}</h1>
         <form action="/menu/{{ menu.id }}/edit" method="post">
             <table border="1" cellpadding="5" cellspacing="5">
                 <tr>

@@ -11,7 +11,7 @@ Menu planning is a random generator menu using your common starters, lunches and
 * pip install -r requirements.txt
 
 ## How to use
-* Create a env.json file in the root directory
+* Create a env.json file with the following structure in the root directory
 
 ```json
 {
@@ -21,6 +21,13 @@ Menu planning is a random generator menu using your common starters, lunches and
   "password": "xxxx",
   "charset": "xxxx"
 }
+```
+
+* Create the initial database. Import the db object from an interactive Python shell in the root directory to create the tables and database
+
+```python
+from menu_planning import db
+db.create_all()
 ```
 
 * Insert rows in starter, lunch and dinner tables

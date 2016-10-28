@@ -5,7 +5,7 @@ Menu planning is a random generator menu using your common starters, lunches and
 
 ## Requirements
 * Python 2.7
-* MySQL
+* MySQL >= 5.6.5
 
 ## Install
 * pip install -r requirements.txt

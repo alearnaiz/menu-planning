@@ -4,3 +4,4 @@ mock==2.0.0
 mysqlclient==1.3.7
 pytest==3.0.2
 SQLAlchemy==1.0.15
+anydo-api==0.0.1

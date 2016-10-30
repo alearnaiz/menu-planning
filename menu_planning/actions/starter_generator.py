@@ -1,7 +1,7 @@
 from menu_planning.services.starter_service import StarterService
 
 
-class GenerateStarter(object):
+class StarterGenerator(object):
 
     def __init__(self, starter_service=StarterService()):
         self.starter_service = starter_service

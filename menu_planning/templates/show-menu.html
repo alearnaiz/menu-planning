@@ -8,6 +8,11 @@
 <body>
     {% if menu %}
         <h1>Your menu {% if menu.name %}{{ menu.name }}{% endif %}</h1>
+
+        {% if success %}
+            <h2>{{ success }}</h2>
+        {% endif %}
+
         <table border="1" cellpadding="5" cellspacing="5">
             <tr>
                 <th>Date</th>
@@ -71,6 +76,12 @@
             <br>
 
             <input type="submit" value="Submit">
+        </form>
+
+        <br>
+
+        <form action="/menu/{{ menu.id }}/anydo" method="post">
+            <input type="submit" value="Send ingredients to any.do">
         </form>
     {% else %}
         <h1>Menu not found</h1>

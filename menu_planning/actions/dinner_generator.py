@@ -1,7 +1,7 @@
 from menu_planning.services.dinner_service import DinnerService
 
 
-class GenerateDinner(object):
+class DinnerGenerator(object):
 
     def __init__(self, menu_id, lunch_days_left, dinner_days_left, is_lunch_left=False,
                  dinner_service=DinnerService()):

@@ -1,0 +1,24 @@
+<label for="ingredient_{{ ingredient.id }}">{{ ingredient.name }}</label>
+<input type="checkbox" id="ingredient_{{ ingredient.id }}" name="ingredients[]" value="{{ ingredient.id }}"
+    {% for food_ingredient in food_ingredients %}
+        {% if food_ingredient.ingredient_id == ingredient.id %}
+            checked
+        {% endif %}
+    {% endfor %}
+>
+
+<br>
+
+<label for="quantity_{{ ingredient.id }}"> Quantity: </label>
+<input type="text" id="quantity_{{ ingredient.id }}" name="quantity_{{ ingredient.id }}"
+    {% for food_ingredient in food_ingredients %}
+        {% if food_ingredient.ingredient_id == ingredient.id %}
+            {% if food_ingredient.quantity %}
+                value="{{ food_ingredient.quantity }}"
+            {% endif  %}
+        {% endif %}
+    {% endfor %}
+>
+
+<br>
+<br>

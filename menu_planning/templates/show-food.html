@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <title>Food</title>
+</head>
+<body>
+    {% if food %}
+        {% if food.starter %}
+            {% set title = 'Starter: ' + food.starter.name %}
+        {% elif food.lunch %}
+            {% set title = 'Lunch: ' + food.lunch.name %}
+        {% elif food.dinner %}
+            {% set title = 'Dinner: ' + food.dinner.name %}
+        {% endif %}
+
+        <h1>{{ title }}</h1>
+
+        {% if success %}
+            <h2>{{ success }}</h2>
+        {% endif %}
+
+        <form action="/food/{{ food.id }}" method="post">
+            <div id="foods">
+                {% for ingredient in ingredients %}
+                    {% include 'partials/create-ingredient.html' %}
+                {% endfor %}
+            </div>
+            <input type="button" id="add_ingredient" value="Add ingredient">
+            <div id="new_ingredient"></div>
+
+            <br>
+
+            <input type="submit" value="Save">
+        </form>
+    {% else %}
+        <h1>Food not found</h1>
+    {% endif %}
+
+    <script>
+        $(document).ready(function() {
+            $("#add_ingredient").click(function() {
+                $("#add_ingredient").hide();
+
+                $('<input>').attr({
+                    type: 'text',
+                    id: 'ingredient',
+                }).appendTo('#new_ingredient');
+
+                $button = $('<input>').attr({
+                    type: 'button',
+                    value: 'Add ingredient'
+                });
+                $button.appendTo('#new_ingredient');
+
+                $button.click(function() {
+                    $.ajax({
+                        url: "/ingredient",
+                        method: "POST",
+                        data: {name: $("#ingredient").val()}
+                    }).done(function(val) {
+                        if (val) {
+                            $("#add_ingredient").show();
+                            $("#new_ingredient").empty();
+                            $("#foods").append(val);
+                        }
+                    });
+                })
+            });
+
+        });
+    </script>
+</body>
+</html>

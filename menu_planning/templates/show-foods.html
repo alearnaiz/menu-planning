@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Foods</title>
+</head>
+<body>
+    <h1>Foods</h1>
+
+    {% if starters %}
+        <h2>Starters</h2>
+        <ul>
+            {% for starter in starters %}
+                <li>
+                    <a href="/food/{{ starter.id }}">{{ starter.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <br>
+
+    {% if lunches %}
+        <h2>Lunches</h2>
+        <ul>
+            {% for lunch in lunches %}
+                <li>
+                    <a href="/food/{{ lunch.id }}">{{ lunch.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <br>
+
+    {% if dinners %}
+        <h2>Dinners</h2>
+        <ul>
+            {% for dinner in dinners %}
+                <li>
+                    <a href="/food/{{ dinner.id }}">{{ dinner.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+</html>

@@ -1,8 +1,8 @@
 from datetime import date, timedelta
 
-from menu_planning.actions.generate_lunch import GenerateLunch
-from menu_planning.actions.generate_dinner import GenerateDinner
-from menu_planning.actions.generate_starter import GenerateStarter
+from menu_planning.actions.lunch_generator import LunchGenerator
+from menu_planning.actions.dinner_generator import DinnerGenerator
+from menu_planning.actions.starter_generator import StarterGenerator
 from menu_planning.services.daily_menu_service import DailyMenuService
 from menu_planning.services.lunch_service import LunchService
 from menu_planning.services.dinner_service import DinnerService
@@ -10,7 +10,7 @@ from menu_planning.services.starter_service import StarterService
 from menu_planning.services.menu_service import MenuService
 
 
-class GenerateMenu(object):
+class MenuGenerator(object):
 
     MAX_RETRIES = 30
 
@@ -50,7 +50,7 @@ class GenerateMenu(object):
             if day == 0 and not start_lunch:
                 current_starter = None
                 current_lunch = None
-                current_dinner = self.generate_dinner(menu.id, lunch_days_left, dinner_days_left)
+                current_dinner = self.dinner_generator(menu.id, lunch_days_left, dinner_days_left)
                 num_dinner_days = 1
                 dinner_days_left -= 1
             else:
@@ -63,16 +63,16 @@ class GenerateMenu(object):
                         current_lunch = current_dinner.related_lunch
                         num_lunch_days = 1
                     else:
-                        current_lunch = self.generate_lunch(menu.id, lunch_days_left, dinner_days_left,
-                                                            is_dinner_left=
-                                                            self.is_dinner_left(current_dinner, num_dinner_days))
+                        current_lunch = self.lunch_generator(menu.id, lunch_days_left, dinner_days_left,
+                                                             is_dinner_left=
+                                                             self.is_dinner_left(current_dinner, num_dinner_days))
                         num_lunch_days = 1
 
                     lunch_days_left -= 1
 
                     # Starter
                     if current_lunch and current_lunch.need_starter:
-                        current_starter = self.generate_starter()
+                        current_starter = self.starter_generator()
                     else:
                         current_starter = None
                 else:
@@ -88,9 +88,9 @@ class GenerateMenu(object):
                         current_dinner = self.dinner_service.get_by_id(id=current_lunch.related_dinner_id)
                         num_dinner_days = 1
                     else:
-                        current_dinner = self.generate_dinner(menu.id, lunch_days_left, dinner_days_left,
-                                                              is_lunch_left=
-                                                              self.is_lunch_left(current_lunch, num_lunch_days))
+                        current_dinner = self.dinner_generator(menu.id, lunch_days_left, dinner_days_left,
+                                                               is_lunch_left=
+                                                               self.is_lunch_left(current_lunch, num_lunch_days))
                         num_dinner_days = 1
 
                     dinner_days_left -= 1
@@ -110,14 +110,14 @@ class GenerateMenu(object):
         return menu
 
     @classmethod
-    def generate_lunch(cls, menu_id, lunch_days_left, dinner_days_left, is_dinner_left=False):
+    def lunch_generator(cls, menu_id, lunch_days_left, dinner_days_left, is_dinner_left=False):
         is_found = False
         for i in range(cls.MAX_RETRIES):
-            generate_lunch = GenerateLunch(menu_id=menu_id, lunch_days_left=lunch_days_left,
-                                           dinner_days_left=dinner_days_left,
-                                           is_dinner_left=is_dinner_left)
-            if generate_lunch.is_valid():
-                lunch = generate_lunch.lunch
+            lunch_generator = LunchGenerator(menu_id=menu_id, lunch_days_left=lunch_days_left,
+                                             dinner_days_left=dinner_days_left,
+                                             is_dinner_left=is_dinner_left)
+            if lunch_generator.is_valid():
+                lunch = lunch_generator.lunch
                 is_found = True
                 break
         if not is_found:
@@ -125,14 +125,14 @@ class GenerateMenu(object):
         return lunch
 
     @classmethod
-    def generate_dinner(cls, menu_id, lunch_days_left, dinner_days_left, is_lunch_left=False):
+    def dinner_generator(cls, menu_id, lunch_days_left, dinner_days_left, is_lunch_left=False):
         is_found = False
         for i in range(cls.MAX_RETRIES):
-            generate_dinner = GenerateDinner(menu_id=menu_id, lunch_days_left=lunch_days_left,
-                                             dinner_days_left=dinner_days_left,
-                                             is_lunch_left=is_lunch_left)
-            if generate_dinner.is_valid():
-                dinner = generate_dinner.dinner
+            dinner_generator = DinnerGenerator(menu_id=menu_id, lunch_days_left=lunch_days_left,
+                                               dinner_days_left=dinner_days_left,
+                                               is_lunch_left=is_lunch_left)
+            if dinner_generator.is_valid():
+                dinner = dinner_generator.dinner
                 is_found = True
                 break
         if not is_found:
@@ -140,12 +140,12 @@ class GenerateMenu(object):
         return dinner
 
     @classmethod
-    def generate_starter(cls):
+    def starter_generator(cls):
         is_found = False
         for i in range(cls.MAX_RETRIES):
-            generate_starter = GenerateStarter()
-            if generate_starter.is_valid():
-                starter = generate_starter.starter
+            starter_generator = StarterGenerator()
+            if starter_generator.is_valid():
+                starter = starter_generator.starter
                 is_found = True
                 break
         if not is_found:

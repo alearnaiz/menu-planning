@@ -2,6 +2,12 @@ from menu_planning import db
 from sqlalchemy.sql import func, expression
 
 
+class FoodType(object):
+    STARTER = 0
+    LUNCH = 1
+    DINNER = 2
+
+
 class Menu(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=True)
@@ -36,8 +42,34 @@ class DailyMenu(db.Model):
         return 'Daily menu {0}, day {1}'.format(self.id, self.day)
 
 
-class Lunch(db.Model):
+class FoodIngredient(db.Model):
+    food_id = db.Column(db.Integer, db.ForeignKey('food.id'), primary_key=True)
+    ingredient_id = db.Column(db.Integer, db.ForeignKey('ingredient.id'), primary_key=True)
+    quantity = db.Column(db.Float, nullable=True)
+
+    def __init__(self, food_id, ingredient_id, quantity=None):
+        self.food_id = food_id
+        self.ingredient_id = ingredient_id
+        self.quantity = quantity
+
+    def __repr__(self):
+        return 'FoodIngredient, food {0}, ingredient {1}, quantity {2}'.format(self.food_id, self.ingredient_id,
+                                                                               self.quantity)
+
+
+class Food(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.Integer, nullable=False)
+
+    def __init__(self, type):
+        self.type = type
+
+    def __repr__(self):
+        return 'Food {0}, type {1}'.format(self.id, self.type)
+
+
+class Lunch(db.Model):
+    id = db.Column(db.Integer, db.ForeignKey('food.id'), primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     days = db.Column(db.Integer, default=1)
     need_starter = db.Column(db.Boolean, server_default=expression.false())
@@ -54,7 +86,7 @@ class Lunch(db.Model):
 
 
 class Dinner(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, db.ForeignKey('food.id'), primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     days = db.Column(db.Integer, default=1)
     related_lunch = db.relationship('Lunch', uselist=False, backref='dinner', lazy='select')
@@ -68,7 +100,7 @@ class Dinner(db.Model):
 
 
 class Starter(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, db.ForeignKey('food.id'), primary_key=True)
     name = db.Column(db.String(100), nullable=False)
 
     def __init__(self, name):
@@ -76,3 +108,14 @@ class Starter(db.Model):
 
     def __repr__(self):
         return 'Starter {0}, name {1}'.format(self.id, self.name)
+
+
+class Ingredient(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return 'Ingredient {0}, name {1}'.format(self.id, self.name)

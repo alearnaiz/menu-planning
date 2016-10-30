@@ -3,4 +3,4 @@
 .cache/
 __pycache__/
 data.sql
-env.json
+credentials.json

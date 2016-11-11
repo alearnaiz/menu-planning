@@ -14,7 +14,7 @@ class FoodIngredientService(object):
                  ). \
             filter(DailyMenu.menu_id == menu_id).all()
 
-    def get_by_food_id(self, food_id):
+    def get_all_by_food_id(self, food_id):
         return FoodIngredient.query.filter_by(food_id=food_id).all()
 
     def delete_all_by_food_id(self, food_id):

@@ -146,7 +146,7 @@ def show_food(food_id):
         food.dinner = dinner_service.get_by_id(food.id)
 
     ingredients = ingredient_service.get_all()
-    food_ingredients = food_ingredient_service.get_by_food_id(food.id)
+    food_ingredients = food_ingredient_service.get_all_by_food_id(food.id)
 
     return render_template('show-food.html', food=food, ingredients=ingredients, food_ingredients=food_ingredients,
                            success=request.args.get('success'))

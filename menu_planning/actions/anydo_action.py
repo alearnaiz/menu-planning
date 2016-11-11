@@ -30,7 +30,16 @@ class AnydoAction(object):
             for ingredient_id, quantity in ingredients.iteritems():
                 ingredient = self.ingredient_service.get_by_id(ingredient_id)
                 if quantity > 0:
-                    title = '{0}, quantity {1}'.format(ingredient.name, quantity)
+                    title = '{0}, quantity {1}'.format(ingredient.name.encode('utf-8'), quantity)
                 else:
-                    title = '{0}'.format(ingredient.name)
-                self.anydo_service.create_task(category=category, user=user, title=title)
+                    title = '{0}'.format(ingredient.name.encode('utf-8'))
+                self.create_task(title, category, user)
+
+    def create_task(self, title, category, user, retries=3):
+        try:
+            self.anydo_service.create_task(category=category, user=user, title=title)
+        except Exception as error:
+            if retries > 0:
+                self.create_task(title, category, user, retries-1)
+            else:
+                raise error

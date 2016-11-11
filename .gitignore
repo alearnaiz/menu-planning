@@ -2,5 +2,5 @@
 *.py[cod]
 .cache/
 __pycache__/
-data.sql
+data/
 credentials.json

@@ -236,7 +236,7 @@ def get_editable_menu(menu_id):
 
 def get_date(date):
     try:
-        month, day, year = date.split('/')
+        day, month, year = date.split('-')
         return datetime(int(year), int(month), int(day))
     except Exception:
         raise Exception('Wrong parameters')

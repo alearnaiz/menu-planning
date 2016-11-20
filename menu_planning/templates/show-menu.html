@@ -22,7 +22,7 @@
             </tr>
             {% for daily_menu in menu.daily_menus %}
                 <tr>
-                    <td>{{ daily_menu.day }}</td>
+                    <td>{{ daily_menu.day.strftime('%d-%m-%Y') }}</td>
                     <td>
                         {% if daily_menu.starter %}
                             {{ daily_menu.starter.name }}

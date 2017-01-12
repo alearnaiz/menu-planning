@@ -1,7 +1,7 @@
 # Menu planning
 
 ## Overview
-Menu planning is a random generator menu using your common starters, lunches and dinners
+Menu planning is a random generator menu using your common starters, lunches and dinners, then if you want you could send the ingredients to [Any.do](http://es.any.do/) 
 
 ## Requirements
 * Python 2.7
@@ -15,11 +15,18 @@ Menu planning is a random generator menu using your common starters, lunches and
 
 ```json
 {
-  "database": "xxxx",
-  "host": "xxxx",
-  "user": "xxxx",
-  "password": "xxxx",
-  "charset": "xxxx"
+  "mysql": {
+    "database": "xxxx",
+    "host": "xxxx",
+    "user": "xxxx",
+    "password": "xxxx",
+    "charset": "xxxx"
+  },
+  "anydo": {
+    "email": "xxxx",
+    "password": "xxxx",
+    "category_name": "xxxx"
+  }
 }
 ```
 
@@ -30,12 +37,15 @@ from menu_planning import db
 db.create_all()
 ```
 
-* Insert rows in starter, lunch and dinner tables
+* Insert rows in food, starter, lunch, dinner, food, ingredient tables
 
 ```sql
-INSERT INTO starter (id, name) VALUES (1, 'Salmorejo/Gazpacho');
-INSERT INTO dinner(id, name, days) VALUES (1, 'Sandwich de pollo', 1);
-INSERT INTO lunch (id, name, days, need_starter, related_dinner_id) VALUES (1, 'Pollo asado', 1, true, 1);
+INSERT INTO `food` (id, type) VALUES (1,0);
+INSERT INTO `starter` (id, name) VALUES (1,'Salmorejo');
+INSERT INTO `ingredient` (id, name) VALUES (1,'Tomate');
+INSERT INTO `ingredient` (id, name) VALUES (2,'Ajo');
+INSERT INTO `food_ingredient` (food_id, ingredient_id, quantity) VALUES (1,1,5),(1,2,1);
+
 ```
 
 * In the root directory run **python runserver.py**

@@ -55,7 +55,7 @@ INSERT INTO `food_ingredient` (food_id, ingredient_id, quantity) VALUES (2,3,5);
 INSERT INTO `food` (id, type) VALUES (3,2);
 INSERT INTO `dinner` (id, name) VALUES (3,'Revuelto de setas');
 INSERT INTO `ingredient` (id, name) VALUES (4,'Huevo');
-INSERT INTO `ingredient` (id, name) VALUES (5 ,'Setas');
+INSERT INTO `ingredient` (id, name) VALUES (5,'Setas');
 INSERT INTO `food_ingredient` (food_id, ingredient_id, quantity) VALUES (3,4,2),(3,5,NULL);
 ```
 

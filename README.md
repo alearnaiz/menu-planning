@@ -1,7 +1,7 @@
 # Menu planning
 
 ## Overview
-Menu planning is a random generator menu using your common starters, lunches and dinners, then if you want you could send the ingredients to [Any.do](http://es.any.do/) 
+Menu planning is a random menu generator using your common starters, lunches and dinners, then if you want you could send the ingredients to [Any.do](http://es.any.do/) 
 
 ## Requirements
 * Python 2.7
